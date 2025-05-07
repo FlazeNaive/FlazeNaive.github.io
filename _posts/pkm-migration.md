@@ -21,3 +21,6 @@
 
 #### 绿宝石386 -> 原版绿宝石
 原版没法读取魔改版存档，用修改器直接写RAM（cite修改器原作者）
+
+## Reference
+- 感觉是市面上最全的一个: [Guide: How to transfer a Pokemon through different generations using emulation](https://www.reddit.com/user/Porta_14/comments/lxbjwv/guide_how_to_transfer_a_pokemon_through_different/#:~:text=In%20your%20generation%204%20games,your%20save%20file%20as%20a%20%5B.)
