@@ -1,0 +1,23 @@
+# 把Pokemon从模拟器Gen3洗白的小日记
+## Background
+倒腾旧电脑从硬盘里翻出了08年的绿宝石386存档，在当时亲自魔的闪光梦幻/999HP会飞天术寄生种子巨沼怪中翻出了少量原版存档，看着手里的NS起了歹念，准备开始折腾。
+
+## 传输
+当前进度：绿宝石386 -> 原版绿宝石 -> 魂银
+### Gen3 -> Gen4
+- VBA v1和v2，v1能开魔改版，v2能开原版；修改器只能改v1的动态内存（提一下64KB和128KB的sav档，64KB到128KB的魔改方法暂时没找到，但是cite一下[那个structure](https://bulbapedia.bulbagarden.net/wiki/Save_data_structure_(Generation_III))；64kb是导出的battery file，128kb应该是在gba文件隔壁/BATTERY folder下面能找到的）
+- mGBA的128kb sav在gba文件文件夹下，vba needs to be checked, likely under BATTERY folder
+- DeSmuME （cite Youtube，Reddit）
+- MelonDs （cite一下，没啥软用）
+- Mumu模拟器+DraStic（cite bilibili，唯一一个识别到了gen3卡槽的）
+   - （add file structure）
+- mention that 日版gen4只能读对应语言版本的gen3
+- 如果能找到但是说存档损坏（日英双语方便搜索），在gen3游戏内save一下就好
+#### 存档要求
+- gen3 全国图鉴
+- gen4 在pal park
+    - （attach下载的存档，记得cite）
+    - （attach使用的gba file，记得cite）
+
+#### 绿宝石386 -> 原版绿宝石
+原版没法读取魔改版存档，用修改器直接写RAM（cite修改器原作者）
