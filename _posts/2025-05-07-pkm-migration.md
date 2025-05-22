@@ -2,7 +2,7 @@
 layout: post
 title:  "关于把Pokemon从模拟器Gen3洗白的记录"
 date:   2025-05-07 13:50:47 +0200
-tags: [Pokemon, Emulation]
+tags: [Pokémon, Emulation]
 permalink: /pokemon-migration/
 ---
 
