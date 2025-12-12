@@ -1,24 +1,80 @@
 ---
 layout: post
-title:  "关于把Pokemon从模拟器Gen3洗白的记录"
-date:   2025-05-07 13:50:47 +0200
+title:  "把Pokemon从魔改386带到HOME的全过程"
+date:   2025-12-12 23:38:47 +0200
 tags: [Pokémon, Emulation]
 permalink: /pokemon-migration/
 ---
 
-# Background
-倒腾旧电脑从硬盘里翻出了08年的绿宝石386存档，在亲自魔的闪光梦幻/999HP会飞天术寄生种子巨沼怪中翻出了少量正经存档，看着手里的NS起了歹念，折腾开始。
+# 背景
+倒腾旧电脑从硬盘里翻出了08年的绿宝石386存档，在各种幼年魔术师产物中翻出了少量正经存档，都是合理合规的怎么不能传到现在了！开搞！
 
-（虽然时不时怀疑自己借用别人存档+打开PKHex检查合法性的行为和直接魔到底有什么区别，但执念和洁癖本来就挺唯心的，那我觉得它们是以前的六只它们就是吧www）
-
-# 传输
-当前进度：
+走线路线：
 - 模拟器：绿宝石386（基于日版） -> 日文原版绿宝石 -> 魂银（日版）-> 黑（美版）
 - 3DS -> NS：Y -> Bank -> HOME
 
-## Gen3 -> Gen4
-- 关于64KB和128KB的sav档，64KB到128KB的魔改方法暂时没找到([this doesn't work](https://projectpokemon.org/home/forums/topic/38362-converting-64kb-to-128kb-3rd-gen/))，但是[structure](https://bulbapedia.bulbagarden.net/wiki/Save_data_structure_(Generation_III))；64kb是导出的battery file，128kb应该是在gba文件隔壁/BATTERY folder下面能找到的）
-- mGBA的128kb sav在gba文件文件夹下，vba under BATTERY folder
+# 绿宝石386 -> 日版绿宝石
+魔改的绿宝石386和NDS模拟器的slot2不兼容，只能先把386存档洗白到原版绿宝石再作打算。
+
+## Related Works
+如[宝可梦WIKI](https://emulation.gametechwiki.com/index.php/Game_Boy_Advance_emulators#Save_formats)所说，VBA早期的存档格式比较独特。且正好386是64KB的存档但原版是128KB，直接导入电池存档会导致白屏。
+-   早期的版本对128KB存档不完全兼容，386的ROM可以导入128KB存档，导出只支持64KB。
+
+但是，无论flash格式如何，在SRAM里格式至少肯定是一致的，再通过[*简单的观察*](#题外话)*可得*其内存安全也不是非常安全，可以考虑利用BUG进行存档迁移。
+
+## 工具
+古早玩意儿兼容性堪忧，只保证以下版本可以work：
+- **GBA模拟器**：VBA v1.72简体中文修正版
+    - VBA-m v2.1.11打不开386魔改版的ROM
+- **ROM**：口袋吧原装386，日版绿宝石
+    - 386是基于日版汉化+魔改的，虽然理论上英版日版的存档互通，但为了减少变量还是推荐用日版
+- **存档**：386的`.sav`存档，如果是64KB需要转换，128KB理论和原版兼容
+
+### 存档位置
+VBA的`.sav`文件存放在ROM同一目录下，文件名和ROM相同仅后缀名为`.sav`。
+理论上386的存档会是一个64KB的`.sav`，如果是128KB的话应该可以直接跳过转换步骤。
+
+mGBA的`.sav`应该再GBA文件夹下，更新版本的VBA可以在BATTERY文件夹下找。
+
+### 存档格式转换（复现失败）
+
+参考[宝可梦wiki](https://bulbapedia.bulbagarden.net/wiki/Save_data_structure_(Generation_III))，G3的存档结构是已知的，也许可以按照[这篇帖子](https://projectpokemon.org/home/forums/topic/38362-converting-64kb-to-128kb-3rd-gen/)进行转换。
+ - 手动搓了一下也许是操作失误也许是386魔改的原因总之没有成功
+ - 感觉比较无聊就也没继续折腾
+
+### 利用BUG迁移
+根据SRAM中存档格式一致的推测，如果先打开游戏A的ROM及存档，并在**存档内容被clear掉之前**加载游戏B的ROM，且该ROM没有对应flash存档的前提下，理论上有概率可以**直接读取前一个游戏中SRAM对应内存区域**（不知道load具体逻辑是什么，但体感是优先检测有无`.sav`）。
+
+为了加大成功概率，考虑在存档/读档（这时候可能会锁一下SRAM？）的同时load另一个ROM。
+
+#### 具体步骤
+0. **备份存档**，自动保存乃一生之敌
+1. 所需食材
+    - 386的ROM
+    - 386的存档（64KB）
+    - 日版绿宝石的ROM
+
+    <p align="center">
+    <img src="../assets/fig/2025-05-07-pkm-migration/g3-386-JP/files.png"  style="width:350px;"/>
+    </p>
+
+2. 用VBA打开386的ROM和存档，进游戏先保存一次，在存档结束前打开原版绿宝石的ROM（请勿断电时断电x）。
+    
+    建议切换ROM时保存的存档和现有存档保持一致（防止save真的不是原子操作导致存档损坏）
+
+    ![image](../assets/fig/2025-05-07-pkm-migration/g3-386-JP/saving.png)
+
+3. 严格按照上述操作大概率一次成功，迁移失败的话每次删掉原版自动产生的`.sav`再卡几次。注意即使是完全初始状态的ROM，切出时也会自动保存。
+    ![image](../assets/fig/2025-05-07-pkm-migration/g3-386-JP/done.png)
+
+## 题外话
+之所以推测是SRAM在两次load之间存在内存泄漏，主要是手滑打开红宝石时正好触发该（会导致死档的恶性）BUG。果然保存时不要断电是有道理的……
+
+![image](../assets/fig/2025-05-07-pkm-migration/g3-386-JP/ruby1.png)
+![image](../assets/fig/2025-05-07-pkm-migration/g3-386-JP/ruby2.png)
+
+
+# 日版绿宝石 -> Gen4
 - DeSmuME 
     - [Youtube](https://www.youtube.com/watch?v=QHKlnYfglFk)
     - [Trying Pal Park transfer from Pokemon Emerald to Pokemon Diamond on DeSmuME](https://gbatemp.net/threads/trying-pal-park-transfer-from-pokemon-emerald-to-pokemon-diamond-on-desmume.560355/)
