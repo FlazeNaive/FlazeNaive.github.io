@@ -2,7 +2,7 @@
 layout: post
 title:  "把Pokemon从魔改386带到HOME的全过程"
 date:   2025-12-12 23:38:47 +0200
-tags: [Pokémon, Emulation]
+tags: [Pokémon, Emulator]
 permalink: /pokemon-migration/
 ---
 
@@ -38,12 +38,12 @@ mGBA的`.sav`应该再GBA文件夹下，更新版本的VBA可以在BATTERY文件
 
 ### 存档格式转换（复现失败）
 
-参考[宝可梦wiki](https://bulbapedia.bulbagarden.net/wiki/Save_data_structure_(Generation_III))，G3的存档结构是已知的，也许可以按照[这篇帖子](https://projectpokemon.org/home/forums/topic/38362-converting-64kb-to-128kb-3rd-gen/)进行转换。
+参考[宝可梦wiki](https://bulbapedia.bulbagarden.net/wiki/Save_data_structure_(Generation_III))，G3的存档结构已知，也许可以按照[这篇帖子](https://projectpokemon.org/home/forums/topic/38362-converting-64kb-to-128kb-3rd-gen/)进行转换。
  - 手动搓了一下也许是操作失误也许是386魔改的原因总之没有成功
  - 感觉比较无聊就也没继续折腾
 
 ### 利用BUG迁移
-根据SRAM中存档格式一致的推测，如果先打开游戏A的ROM及存档，并在**存档内容被clear掉之前**加载游戏B的ROM，且该ROM没有对应flash存档的前提下，理论上有概率可以**直接读取前一个游戏中SRAM对应内存区域**（不知道load具体逻辑是什么，但体感是优先检测有无`.sav`）。
+根据SRAM中存档格式一致的推测，如果先打开386的ROM及存档，并在**存档内容被clear掉之前**加载原版绿宝石的ROM，且该ROM没有对应flash存档的前提下，有概率会**直接读取前一个游戏中SRAM对应内存区域**（不知道load具体逻辑是什么，但体感是优先检测有无`.sav`）。
 
 为了加大成功概率，考虑在存档/读档（这时候可能会锁一下SRAM？）的同时load另一个ROM。
 
@@ -55,23 +55,29 @@ mGBA的`.sav`应该再GBA文件夹下，更新版本的VBA可以在BATTERY文件
     - 日版绿宝石的ROM
 
     <p align="center">
-    <img src="../assets/fig/2025-05-07-pkm-migration/g3-386-JP/files.png"  style="width:350px;"/>
+    <img src="../assets/fig/2025-05-07-pkm-migration/g3-386-JP/files.png"  style="width:400px;"/>
     </p>
 
 2. 用VBA打开386的ROM和存档，进游戏先保存一次，在存档结束前打开原版绿宝石的ROM（请勿断电时断电x）。
     
     建议切换ROM时保存的存档和现有存档保持一致（防止save真的不是原子操作导致存档损坏）
 
-    ![image](../assets/fig/2025-05-07-pkm-migration/g3-386-JP/saving.png)
+    <p align="center">
+    <img src="../assets/fig/2025-05-07-pkm-migration/g3-386-JP/saving.png"  style="width:260px;"/>
+    </p>
 
 3. 严格按照上述操作大概率一次成功，迁移失败的话每次删掉原版自动产生的`.sav`再卡几次。注意即使是完全初始状态的ROM，切出时也会自动保存。
-    ![image](../assets/fig/2025-05-07-pkm-migration/g3-386-JP/done.png)
+    <p align="center">
+    <img src="../assets/fig/2025-05-07-pkm-migration/g3-386-JP/done.png"  style="width:450px;"/>
+    </p>
 
 ## 题外话
 之所以推测是SRAM在两次load之间存在内存泄漏，主要是手滑打开红宝石时正好触发该（会导致死档的恶性）BUG。果然保存时不要断电是有道理的……
 
-![image](../assets/fig/2025-05-07-pkm-migration/g3-386-JP/ruby1.png)
-![image](../assets/fig/2025-05-07-pkm-migration/g3-386-JP/ruby2.png)
+<p align="center">
+<img src="../assets/fig/2025-05-07-pkm-migration/g3-386-JP/ruby1.png"  style="width:450px;"/>
+<img src="../assets/fig/2025-05-07-pkm-migration/g3-386-JP/ruby2.png"  style="width:450px;"/>
+</p>
 
 
 # 日版绿宝石 -> Gen4
