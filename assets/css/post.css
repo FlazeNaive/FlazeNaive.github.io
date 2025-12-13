@@ -6,21 +6,37 @@
 }
 
 @media (min-width: 1000px) {
-    .post-content {
-        max-width: 750px; 
-    }
-
+    
+    /* === 目录样式  === */
     .scroll-nav {
         display: block;
         position: fixed;
-        right: 20px;
+        right: 20px;       /* 距离右边 20px */
+        width: 240px;      /* 自身宽度 240px */
         top: 100px;
-        width: 240px;
         max-height: calc(100vh - 120px);
         overflow-y: auto;
-        padding: 10px 0; /* 这里的 padding 改小一点，交给 link 去控制 */
+        padding: 10px 0;
         box-sizing: border-box;
         z-index: 999;
+    }
+
+    /* === 文章内容样式  === */
+    .post-content {
+        /* 1. 正常的阅读限制 (防止在大屏幕上文字太长读着累) */
+        max-width: 800px; 
+        
+        /* 2. [核心逻辑] 强制腾出右侧空间 */
+        /* 目录宽240 + 右距20 + 缝隙40 = 300px */
+        /* 这行代码的意思是：无论屏幕多大，文章内容右边必须留出 300px 的空白 */
+        margin-right: 300px; 
+        
+        /* 3. 左侧对齐方式 */
+        /* 如果你想让文章在“剩余空间”里居中，用 auto；如果想靠左，用 20px */
+        margin-left: auto; 
+        
+        /* 4. 确保宽度是自动伸缩的 */
+        width: auto;
     }
 }
 

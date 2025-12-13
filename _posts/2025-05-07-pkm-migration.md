@@ -7,11 +7,11 @@ permalink: /pokemon-migration/
 ---
 
 # 背景
-倒腾旧电脑从硬盘里翻出了08年的绿宝石386存档，在各种幼年魔术师产物中翻出了少量正经存档，都是合理合规的怎么不能传到现在了！开搞！
+倒腾旧电脑从硬盘里翻出了08年的绿宝石386存档，在各种幼年魔术师产物中翻出了少量正经通关队，正好新入了3DS，送到新世代的理论和基建都完备！开搞！
 
-走线路径：
+**走线路径**：
 - 模拟器：绿宝石386（基于日版） -> 日文原版绿宝石 -> 魂银（日版）-> 黑（美版）
-- 3DS -> NS：Y -> Bank -> HOME
+- 3DS -> NS：黑 -> Y -> Bank -> HOME
 
 # 绿宝石386 -> 日版绿宝石
 魔改的绿宝石386和NDS模拟器的slot2不兼容，只能先把386存档洗白到原版绿宝石再作打算。
@@ -20,10 +20,10 @@ permalink: /pokemon-migration/
 如[宝可梦WIKI](https://emulation.gametechwiki.com/index.php/Game_Boy_Advance_emulators#Save_formats)所说，VBA早期的存档格式比较独特。且正好386是64KB的存档但原版是128KB，直接导入电池存档会导致白屏。
 -   早期的版本对128KB存档不完全兼容，386的ROM可以导入128KB存档，导出只支持64KB。
 
-但是，无论flash格式如何，在SRAM里格式至少肯定是一致的，再通过[*简单的观察*](#题外话)*可得*其内存安全也不是非常安全，可以考虑利用BUG进行存档迁移。
+但是，无论flash格式如何，在SRAM里格式至少肯定是一致的，再通过[*简单的观察*](#题外话)*可得*其内存也不是非常安全，可以考虑利用BUG进行存档迁移。
 
 ## 工具
-古早玩意儿兼容性堪忧，只保证以下版本可以work：
+只保证以下版本可以work：
 - **GBA模拟器**：VBA v1.72简体中文修正版
     - VBA-m v2.1.11打不开386魔改版的ROM
 - **ROM**：口袋吧原装386，日版绿宝石
@@ -31,16 +31,14 @@ permalink: /pokemon-migration/
 - **存档**：386的`.sav`存档，如果是64KB需要转换，128KB理论和原版兼容
 
 ### 存档位置
-VBA的`.sav`文件存放在ROM同一目录下，文件名和ROM相同仅后缀名为`.sav`。
+VBA及VBA-m的`.sav`文件存放在ROM同一目录下，文件名和ROM相同仅后缀名为`.sav`。
 理论上386的存档会是一个64KB的`.sav`，如果是128KB的话应该可以直接跳过转换步骤。
-
-mGBA的`.sav`应该再GBA文件夹下，更新版本的VBA可以在BATTERY文件夹下找。
+mGBA的`.sav`应该在GBA文件夹下。
 
 ### 存档格式转换（复现失败）
 
 参考[宝可梦wiki](https://bulbapedia.bulbagarden.net/wiki/Save_data_structure_(Generation_III))，G3的存档结构已知，也许可以按照[这篇帖子](https://projectpokemon.org/home/forums/topic/38362-converting-64kb-to-128kb-3rd-gen/)进行转换。
- - 手动搓了一下也许是操作失误也许是386魔改的原因总之没有成功
- - 感觉比较无聊就也没继续折腾
+ - 也许是386魔改的原因，存档用text editor模式打开只有210行，定位不到帖子的line 3585（十六进制的话行地址也不会是5结尾吧……？）
 
 ### 利用BUG迁移
 根据SRAM中存档格式一致的推测，如果先打开386的ROM及存档，并在**存档内容被clear掉之前**加载原版绿宝石的ROM，且该ROM没有对应flash存档的前提下，有概率会**直接读取前一个游戏中SRAM对应内存区域**（不知道load具体逻辑是什么，但体感是优先检测有无`.sav`）。
@@ -48,7 +46,7 @@ mGBA的`.sav`应该再GBA文件夹下，更新版本的VBA可以在BATTERY文件
 为了加大成功概率，考虑在存档/读档（这时候可能会锁一下SRAM？）的同时load另一个ROM。
 
 #### 具体步骤
-0. **备份存档**，自动保存乃一生之敌
+0. **备份存档**，自动保存实属一生之敌
 1. 所需食材
     - 386的ROM
     - 386的存档（64KB）
@@ -81,6 +79,10 @@ mGBA的`.sav`应该再GBA文件夹下，更新版本的VBA可以在BATTERY文件
 
 
 # 日版绿宝石 -> Gen4
+
+这部分的教程还挺多的，但大部分是实体机或者安卓，但实操的时候很多模拟器识别卡带失败（也不太带细节）
+
+## Draft
 - DeSmuME 
     - [Youtube](https://www.youtube.com/watch?v=QHKlnYfglFk)
     - [Trying Pal Park transfer from Pokemon Emerald to Pokemon Diamond on DeSmuME](https://gbatemp.net/threads/trying-pal-park-transfer-from-pokemon-emerald-to-pokemon-diamond-on-desmume.560355/)
@@ -90,7 +92,7 @@ mGBA的`.sav`应该再GBA文件夹下，更新版本的VBA可以在BATTERY文件
 - 如果能找到但是说存档损坏（日英双语方便搜索），在gen3游戏内save一下就好
     - Like this: ![image](../assets/fig/2025-05-07-pkm-migration/damaged_U.png) ![image](../assets/fig/2025-05-07-pkm-migration/damaged_JP.jpg)
 
-### 存档要求
+## 存档要求
 - gen3 全国图鉴
     - [Pocket Monsters : Emerald [Japan]](https://wowroms.com/en/roms/nintendo-gameboy-advance/download-pocket-monsters-emerald-japan/13807.html)
     - [Pokemon - Emerald Version](https://www.emulatorgames.net/roms/gameboy-advance/pokemon-emerald-version/)
@@ -101,10 +103,6 @@ mGBA的`.sav`应该再GBA文件夹下，更新版本的VBA可以在BATTERY文件
     - [SoulSilver ROM(U)](https://www.emulatorgames.net/roms/nintendo-ds/pokemon-soulsilver-version/)
     - [Pokemon SoulSilver Version - Complete Save (100%) 1.1](https://gbatemp.net/download/pokemon-soulsilver-version-complete-save-100.38214/)
 
-### 绿宝石386 -> 原版绿宝石
-原版没法读取魔改版存档，用修改器直接写内存（修改器原作者: Fuzzier(Gauchyler@etang.com) ）
-
-VBA v1和v2，v1能开魔改版，v2能开原版；修改器只能改v1的动态内存（因为存档compatibility的问题，都打算直接copy内存了，突然发现原版可以读取魔改版的存档内容，不用魔了）
 
 ## Gen4 -> Gen5
 
