@@ -23,6 +23,10 @@ end
 platforms :mingw, :x64_mingw, :mswin, :jruby do
   gem "tzinfo", ">= 1", "< 3"
   gem "tzinfo-data"
+  gem "csv"
+  gem "base64"
+  gem "bigdecimal"
+  gem "mutex_m"
 end
 
 # Performance-booster for watching directories on Windows

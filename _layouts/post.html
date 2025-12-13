@@ -1,0 +1,76 @@
+---
+layout: default
+---
+<!-- 引入你刚刚创建的样式文件 -->
+<link rel="stylesheet" href="/assets/css/post.css">
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">{{ page.title | escape }}</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
+        {{ page.date | date: "%b %-d, %Y" }}
+      </time>
+    </p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    {{ content }}
+  </div>
+
+  <a class="u-url" href="{{ page.url | relative_url }}" hidden></a>
+</article>
+
+<!-- 引入 JS 库 -->
+<script src="/assets/js/scrollnav.min.umd.js"></script>
+<!-- Scrollnav v2.1.2 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/scrollnav/2.1.2/scrollnav.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const content = document.querySelector('.post-content');
+        
+        if (content) {
+            // 初始化 scrollnav
+            scrollnav.init(content, {
+                debug: false,
+                sections: 'h1, h2, h3',
+                insertTarget: content,
+                insertLocation: 'after'
+            });
+
+            // 延迟一小会儿，给链接添加层级样式
+            setTimeout(function() {
+                const links = document.querySelectorAll('.scroll-nav__link');
+
+                links.forEach(function(link) {
+                    const href = link.getAttribute('href');
+                    if (!href) return;
+                    
+                    // 处理中文 ID 编码
+                    let targetId = href.split('#')[1];
+                    try {
+                        targetId = decodeURIComponent(targetId);
+                    } catch (e) {
+                        // 忽略解码错误
+                    }
+
+                    // 尝试查找对应的标题元素
+                    let targetElement = document.getElementById(targetId);
+                    
+                    // 备选方案：如果解码后找不到，尝试原始 ID
+                    if (!targetElement) {
+                        targetElement = document.getElementById(href.split('#')[1]);
+                    }
+
+                    // 如果找到了，添加对应的 CSS 类名 (toc-h2, toc-h3)
+                    if (targetElement) {
+                        const level = targetElement.tagName.toLowerCase(); 
+                        link.classList.add('toc-' + level);
+                    }
+                });
+            }, 100); // 延时改为 100ms，肉眼几乎感觉不到延迟
+        }
+    });
+</script>
